@@ -38,4 +38,15 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
             }
         }
     }
+    data class ContainerState(var n : Int, var j : Int = 0, var dir : Int = 1) {
+        fun incrementCounter() {
+            j += dir
+            if(j == n || j == -1) {
+                dir *= -1
+            }
+        }
+        fun executeCb(cb : (Int) -> Unit) {
+            cb(j)
+        }
+    }
 }
