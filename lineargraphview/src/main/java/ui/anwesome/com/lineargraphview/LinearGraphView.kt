@@ -3,6 +3,7 @@ package ui.anwesome.com.lineargraphview
 /**
  * Created by anweshmishra on 08/03/18.
  */
+import android.app.Activity
 import android.content.*
 import android.graphics.*
 import android.view.*
@@ -45,6 +46,7 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
             j += dir
             if(j == n || j == -1) {
                 dir *= -1
+                j+=dir
             }
         }
         fun executeCb(cb : (Int) -> Unit) {
@@ -151,14 +153,21 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
             }
         }
     }
+    companion object {
+        fun create(activity : Activity, y_points : Array<Float>):LinearGraphView {
+            val view = LinearGraphView(activity, y_points)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
 fun ConcurrentLinkedQueue<LinearGraphView.Line>.at(i : Int):LinearGraphView.Line? {
     var j = 0
     forEach {
-        j++
         if(j == i) {
             return it
         }
+        j++
     }
     return null
 }
