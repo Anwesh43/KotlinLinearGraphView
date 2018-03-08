@@ -6,6 +6,7 @@ package ui.anwesome.com.lineargraphview
 import android.content.*
 import android.graphics.*
 import android.view.*
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -86,6 +87,25 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
         }
         fun startUpdating(startcb : () -> Unit) {
             state.startUpdating(startcb)
+        }
+    }
+    data class LinearGraph(var w: Float , var h : Float, var y_points: Array<Float>) {
+        val lines : ConcurrentLinkedQueue<Line> = ConcurrentLinkedQueue()
+        val state = ContainerState(y_points.size)
+        init {
+            var x = w/20
+            var y = 19*w/20
+            y_points.forEach {
+                val gap = (9*w/10)/y_points.size
+                lines.add(Line(x + gap, it, x, y))
+                x += gap
+                y = it
+            }
+        }
+        fun draw(canvas : Canvas, paint : Paint) {
+            lines.forEach {
+                it.draw(canvas, paint)
+            }
         }
     }
 }
