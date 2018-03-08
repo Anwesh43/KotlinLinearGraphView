@@ -74,4 +74,18 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
             }
         }
     }
+    data class Line(var x : Float, var y : Float, var prevX : Float, var prevY : Float) {
+        val state = State()
+        fun draw(canvas : Canvas, paint : Paint) {
+            paint.color = Color.parseColor("#303F9F")
+            paint.strokeWidth = canvas.width/50f
+            canvas.drawLine(prevX, prevY, prevX + (x - prevX) * state.scale, prevY + (y - prevY) * state.scale, paint)
+        }
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+    }
 }
