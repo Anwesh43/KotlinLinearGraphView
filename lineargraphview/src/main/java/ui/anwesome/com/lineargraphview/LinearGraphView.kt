@@ -107,6 +107,23 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
                 it.draw(canvas, paint)
             }
         }
+        fun update(stopcb : (Float,Int) -> Unit) {
+            state.executeCb {
+                lines.at(it)?.update{ scale ->
+                    state.incrementCounter()
+                    state.executeCb {j ->
+                        stopcb(scale,j)
+                    }
+                }
+            }
+        }
+        fun startUpdating(startcb : () -> Unit) {
+            state.executeCb {
+                lines.at(it)?.startUpdating {
+                    startcb()
+                }
+            }
+        }
     }
 }
 fun ConcurrentLinkedQueue<LinearGraphView.Line>.at(i : Int):LinearGraphView.Line? {
