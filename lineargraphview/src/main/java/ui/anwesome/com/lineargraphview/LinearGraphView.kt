@@ -109,3 +109,13 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
         }
     }
 }
+fun ConcurrentLinkedQueue<LinearGraphView.Line>.at(i : Int):LinearGraphView.Line? {
+    var j = 0
+    forEach {
+        j++
+        if(j == i) {
+            return it
+        }
+    }
+    return null
+}
