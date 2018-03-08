@@ -78,8 +78,6 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
     data class Line(var x : Float, var y : Float, var prevX : Float, var prevY : Float) {
         val state = State()
         fun draw(canvas : Canvas, paint : Paint) {
-            paint.color = Color.parseColor("#303F9F")
-            paint.strokeWidth = canvas.width/50f
             canvas.drawLine(prevX, prevY, prevX + (x - prevX) * state.scale, prevY + (y - prevY) * state.scale, paint)
         }
         fun update(stopcb : (Float) -> Unit) {
@@ -122,6 +120,33 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
                 lines.at(it)?.startUpdating {
                     startcb()
                 }
+            }
+        }
+    }
+    data class Renderer(var view : LinearGraphView, var time : Int = 0) {
+        val animator : Animator = Animator(view)
+        var graph : LinearGraph ?= null
+        fun render(canvas : Canvas, paint : Paint) {
+            if(time == 0) {
+                val w = canvas.width.toFloat()
+                val h = canvas.height.toFloat()
+                graph = LinearGraph(w, h, view.y_points)
+                paint.color = Color.parseColor("#303F9F")
+                paint.strokeWidth = canvas.width/50f
+                paint.strokeCap = Paint.Cap.ROUND
+            }
+            canvas.drawColor(Color.parseColor("#212121"))
+            graph?.draw(canvas, paint)
+            time++
+            animator.animate {
+                graph?.update {scale,j ->
+                    animator.stop()
+                }
+            }
+        }
+        fun handleTap() {
+            graph?.startUpdating {
+                animator.start()
             }
         }
     }
