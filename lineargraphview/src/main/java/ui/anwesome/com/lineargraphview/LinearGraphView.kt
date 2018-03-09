@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.*
 import android.graphics.*
 import android.view.*
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
@@ -94,13 +95,29 @@ class LinearGraphView(ctx : Context, var y_points : Array<Float>) : View(ctx) {
         val lines : ConcurrentLinkedQueue<Line> = ConcurrentLinkedQueue()
         val state = ContainerState(y_points.size)
         init {
-            var x = w/20
-            var y = 19*w/20
-            y_points.forEach {
-                val gap = (9*w/10)/y_points.size
-                lines.add(Line(x + gap, it, x, y))
-                x += gap
-                y = it
+
+            if(y_points.size > 0) {
+                var y_min = y_points[0]
+                var y_max = y_points[0]
+                var x = w/20
+                var y = 19*h/20
+                var oy = 19*h/20
+                y_points.forEach {
+                    if(it < y_min) {
+                        y_min = it
+                    }
+                    if(it > y_max) {
+                        y_max = it
+                    }
+                }
+                val gap = y_max - y_min
+                val h_gap = (0.8f*h)/gap
+                y_points.forEach {
+                    val gap = (9 * w / 10) / y_points.size
+                    lines.add(Line(x + gap, oy - (it * h_gap), x, y))
+                    x += gap
+                    y = oy - (it * h_gap)
+                }
             }
         }
         fun draw(canvas : Canvas, paint : Paint) {
